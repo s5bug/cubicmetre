@@ -62,10 +62,13 @@ lazy val protocol = (project in file("protocol")).settings(
   name := "cubicmetre-protocol",
   version := "0.1.0",
   scalaVersion := "2.13.1",
+  resolvers += Resolver.bintrayRepo("alexknvl", "maven"),
   libraryDependencies ++= Seq(
     "io.circe" %% "circe-core" % "0.13.0-RC1",
     "io.circe" %% "circe-generic" % "0.13.0-RC1",
     "org.scodec" %% "scodec-stream" % "2.0.0",
+    "com.chuusai" %% "shapeless" % "2.3.3",
+    "eu.timepit" %% "singleton-ops" % "0.4.1",
   ),
 ).dependsOn(event, nbt)
 
@@ -74,7 +77,6 @@ lazy val bungee = (project in file("bungee")).settings(
   name := "cubicmetre-bungee",
   version := "0.1.0",
   scalaVersion := "2.13.1",
-  resolvers += Resolver.bintrayRepo("alexknvl", "maven"),
   libraryDependencies ++= Seq(
     "io.circe" %% "circe-core" % "0.13.0-RC1",
     "co.fs2" %% "fs2-io" % "2.2.1",

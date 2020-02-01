@@ -1,6 +1,5 @@
 package tf.bug.cubicmetre.node
 
-import cats._
 import cats.effect._
 import cats.implicits._
 import fs2._

@@ -1,9 +1,7 @@
 package tf.bug.cubicmetre.protocol.packets.client
 
-import scodec.Codec
-import tf.bug.cubicmetre.protocol.ProtocolVersion
 import tf.bug.cubicmetre.protocol.implicits._
-import tf.bug.cubicmetre.protocol.packets.Packet
+import tf.bug.cubicmetre.protocol.packets.PacketRange
 
 case class Request()
 
@@ -11,12 +9,8 @@ object Request {
 
   trait Instances {
 
-    implicit val oneFifteenTwoRequestPacket: Packet.`1.15.2`[Request] = new Packet[Request] {
-      override type Version = ProtocolVersion.`1.15.2`
-      override val version: ProtocolVersion[ProtocolVersion.`1.15.2`] = implicitly
-      override val codec: Codec[Request] = implicitly
-      override val id: Int = 0
-    }
+    implicit val nettyRewriteRequestPacket: PacketRange[Request, 0, 578] =
+      PacketRange[Request, 0, 578](_ => 0, _ => implicitly)
 
   }
 

@@ -4,11 +4,12 @@ import scodec._
 import scodec.bits.BitVector
 import scodec.bits.BitVector.GroupedOp
 import scodec.codecs._
+import singleton.ops.XInt
 import spire.math.{UByte, UShort}
 
 object Datatypes {
 
-  private def gen[T, P: ProtocolVersion](c: Codec[T]): Serializer[T, P] =
+  private def gen[T, P <: XInt : ProtocolVersion](c: Codec[T]): Serializer[T, P] =
     new Serializer[T, P] {
       override val codec: Codec[T] = c
     }
@@ -90,29 +91,29 @@ object Datatypes {
 
     implicit val stringCodec: Codec[String] = variableSizeBytes(varintCodec.xmap(_.value, VarInt), utf8)
 
-    implicit def booleanSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Boolean, P] = gen(booleanCodec)
+    implicit def booleanSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Boolean, P] = gen(booleanCodec)
 
-    implicit def byteSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Byte, P] = gen(byteCodec)
+    implicit def byteSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Byte, P] = gen(byteCodec)
 
-    implicit def ubyteSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[UByte, P] = gen(ubyteCodec)
+    implicit def ubyteSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[UByte, P] = gen(ubyteCodec)
 
-    implicit def shortSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Short, P] = gen(shortCodec)
+    implicit def shortSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Short, P] = gen(shortCodec)
 
-    implicit def ushortSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[UShort, P] = gen(ushortCodec)
+    implicit def ushortSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[UShort, P] = gen(ushortCodec)
 
-    implicit def intSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Int, P] = gen(intCodec)
+    implicit def intSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Int, P] = gen(intCodec)
 
-    implicit def longSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Long, P] = gen(longCodec)
+    implicit def longSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Long, P] = gen(longCodec)
 
-    implicit def floatSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Float, P] = gen(float)
+    implicit def floatSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Float, P] = gen(float)
 
-    implicit def doubleSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[Double, P] = gen(double)
+    implicit def doubleSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[Double, P] = gen(double)
 
-    implicit def varintSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[VarInt, P] = gen(varintCodec)
+    implicit def varintSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[VarInt, P] = gen(varintCodec)
 
-    implicit def varlongSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[VarLong, P] = gen(varlongCodec)
+    implicit def varlongSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[VarLong, P] = gen(varlongCodec)
 
-    implicit def stringSerializer[P](implicit ev: ProtocolVersion[P]): Serializer[String, P] = gen(stringCodec)
+    implicit def stringSerializer[P <: XInt](implicit ev: ProtocolVersion[P]): Serializer[String, P] = gen(stringCodec)
 
   }
 

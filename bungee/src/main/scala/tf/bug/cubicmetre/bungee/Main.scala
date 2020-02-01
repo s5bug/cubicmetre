@@ -13,7 +13,6 @@ import scodec.Codec
 import scodec.bits.ByteVector
 import scodec.stream.{StreamDecoder, StreamEncoder}
 import tf.bug.cubicmetre.protocol.VarInt
-import tf.bug.cubicmetre.protocol.chat.HoverEvent.ShowText
 import tf.bug.cubicmetre.protocol.chat.{Color, Constant, Keybind}
 import tf.bug.cubicmetre.protocol.implicits._
 import tf.bug.cubicmetre.protocol.packets.Packet
@@ -67,12 +66,7 @@ object Main extends IOApp {
                       Keybind(
                         "key.forward",
                         color = Color.Green.some,
-                        bold = true.some,
-                        hoverEvent = ShowText(
-                          Constant(
-                            "lmao nerd who even uses that to move forward anymore"
-                          )
-                        ).some
+                        bold = true.some
                       ),
                       Constant(
                         " to move forward.",
@@ -86,29 +80,29 @@ object Main extends IOApp {
             )
             val encode: Codec[Response] = scodec.codecs
               .variableSizeBytes(varintCodec.xmap(_.value, VarInt),
-                                 scodec.codecs.constant(ByteVector.fromByte(0)) ~> oneFifteenTwoResponsePacket.codec)
+                                 scodec.codecs.constant(ByteVector.fromByte(0)) ~> nettyRewriteResponsePacket.at[578].codec)
             Stream.emit(response).through(StreamEncoder.many(encode).toPipeByte)
           case Instance(Ping(nonce), _) =>
             val pong: Pong = Pong(nonce)
             val encode: Codec[Pong] = scodec.codecs
               .variableSizeBytes(varintCodec.xmap(_.value, VarInt),
-                                 scodec.codecs.constant(ByteVector.fromByte(1)) ~> oneFifteenTwoPongPacket.codec)
+                                 scodec.codecs.constant(ByteVector.fromByte(1)) ~> nettyRewritePongPacket.at[578].codec)
             Stream.emit(pong).through(StreamEncoder.many(encode).toPipeByte)
         }
         .through(c.writes(Some(1.seconds)))
     }
 
-  val packets: Codec[Instance[Packet.`1.15.2`]] = {
-    val packets: Vector[Exists[Packet.`1.15.2`]] = Vector(
-      Exists[Packet.`1.15.2`, Handshake](oneFifteenTwoHandshakePacket),
-      Exists[Packet.`1.15.2`, Request](oneFifteenTwoRequestPacket),
-      Exists[Packet.`1.15.2`, Ping](oneFifteenTwoPingPacket)
+  val packets: Codec[Instance[Packet[*, 578]]] = {
+    val packets: Vector[Exists[Packet[*, 578]]] = Vector(
+      Exists[Packet[*, 578], Handshake](nettyRewriteHandshakePacket.at[578]),
+      Exists[Packet[*, 578], Request](nettyRewriteRequestPacket.at[578]),
+      Exists[Packet[*, 578], Ping](nettyRewritePingPacket.at[578])
     )
     scodec.codecs.choice(
-      packets.map { ev: Exists[Packet.`1.15.2`] =>
+      packets.map { ev: Exists[Packet[*, 578]] =>
         val codec: Codec[ev.T] = ev.value.codec
-        val instCodec: Codec[Instance[Packet.`1.15.2`]] =
-          codec.xmapc(Instance.capture(_)(ev.value))(_.first.asInstanceOf)
+        val instCodec: Codec[Instance[Packet[*, 578]]] =
+          codec.xmapc(Instance.capture[Packet[*, 578], ev.T](_)(ev.value))(_.first.asInstanceOf)
         val packetId = varintCodec.encode(VarInt(ev.value.id)).require
         val packetWithHead = scodec.codecs.constant(packetId) ~> instCodec
         scodec.codecs

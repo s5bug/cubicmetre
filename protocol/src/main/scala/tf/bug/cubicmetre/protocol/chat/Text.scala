@@ -85,6 +85,8 @@ case class ScoreComponent(name: Either[String, UUID], objective: String, value: 
 
 object Text {
 
+  import tf.bug.cubicmetre.protocol.implicits.minecraftColorAsJson
+
   implicit lazy val nonEmptyTextVector: Encoder[NonEmptyVector[Text]] =
     implicitly[Encoder[Vector[Text]]](Encoder.encodeVector(textEncoder)).contramap(_.toVector)
 
