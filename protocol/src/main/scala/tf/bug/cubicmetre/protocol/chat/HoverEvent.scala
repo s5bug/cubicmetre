@@ -42,10 +42,11 @@ object HoverEvent {
 
     import tf.bug.cubicmetre.protocol.implicits.minecraftTextEncoder
 
-    implicit val hoverEventEncoder: Encoder[HoverEvent] = Encoder.instance { // FIXME the encoders in ShowItem and ShowEntity have a chance to fail
-      case t @ ShowText(text) => Json.obj("action" -> t.action.asJson, "value" -> text.asJson)
-      case t                  => Json.obj("action" -> t.action.asJson, "value" -> t.value.asJson)
-    }
+    implicit val hoverEventEncoder: Encoder[HoverEvent] =
+      Encoder.instance { // FIXME the encoders in ShowItem and ShowEntity have a chance to fail
+        case t @ ShowText(text) => Json.obj("action" -> t.action.asJson, "value" -> text.asJson)
+        case t                  => Json.obj("action" -> t.action.asJson, "value" -> t.value.asJson)
+      }
 
   }
 

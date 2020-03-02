@@ -35,8 +35,14 @@ case class NBTLongs(value: Vector[NBTLong]) extends NBT
 object NBT {
 
   def consumeUntil[A, B](consume: Codec[A], until: Codec[B]): Codec[(Vector[A], B)] = {
-    val rightConsume = consume.exmap[Either[B, A]](v => Attempt.Successful(Right(v)), e => Attempt.fromEither(e.leftMap(_ => Err("got left in rightConsume instead of right"))))
-    val leftUntil = until.exmap[Either[B, A]](v => Attempt.Successful(Left(v)), e => Attempt.fromEither(e.swap.leftMap(_ => Err("got right in leftUntil instead of left"))))
+    val rightConsume = consume.exmap[Either[B, A]](
+      v => Attempt.Successful(Right(v)),
+      e => Attempt.fromEither(e.leftMap(_ => Err("got left in rightConsume instead of right")))
+    )
+    val leftUntil = until.exmap[Either[B, A]](
+      v => Attempt.Successful(Left(v)),
+      e => Attempt.fromEither(e.swap.leftMap(_ => Err("got right in leftUntil instead of left")))
+    )
     val eitherConsumeOrUntil = choice(leftUntil, rightConsume).asDecoder
     def recursiveDec(initial: BitVector, step: Vector[A]): Attempt[DecodeResult[(Vector[A], B)]] =
       eitherConsumeOrUntil.decode(initial).flatMap {
@@ -59,6 +65,9 @@ object NBT {
 //      .xmap(v => NBTCompound(v.toMap), _.value.toVector)
   // TODO figure out a good way to Codec[NBTCompound]
 
-  val snbtCodec: Codec[NBTCompound] = Codec[NBTCompound]((_: NBTCompound) => Attempt.failure(Err("snbtCodec not implemented")), (_: BitVector) => Attempt.failure(Err("snbtCodec not implemented")))
+  val snbtCodec: Codec[NBTCompound] = Codec[NBTCompound](
+    (_: NBTCompound) => Attempt.failure(Err("snbtCodec not implemented")),
+    (_: BitVector) => Attempt.failure(Err("snbtCodec not implemented"))
+  )
 
 }

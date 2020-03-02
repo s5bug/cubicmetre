@@ -18,7 +18,7 @@ lazy val nbt = (project in file("nbt")).settings(
   version := "0.1.0",
   scalaVersion := "2.13.1",
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core" % "2.1.0",
+    "org.typelevel" %% "cats-core" % "2.1.1",
     "org.scodec" %% "scodec-core" % "1.11.4",
     "org.scodec" %% "scodec-cats" % "1.0.0",
   ),
@@ -30,9 +30,9 @@ lazy val event = (project in file("event")).settings(
   version := "0.1.0",
   scalaVersion := "2.13.1",
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core" % "2.1.0",
-    "org.typelevel" %% "cats-effect" % "2.0.0",
-    "co.fs2" %% "fs2-core" % "2.2.1",
+    "org.typelevel" %% "cats-core" % "2.1.1",
+    "org.typelevel" %% "cats-effect" % "2.1.2",
+    "co.fs2" %% "fs2-core" % "2.2.2",
   ),
 ).dependsOn(core)
 
@@ -53,7 +53,7 @@ lazy val node = (project in file("node")).settings(
   scalaVersion := "2.13.1",
   libraryDependencies ++= Seq(
     "com.github.fd4s" %% "fs2-kafka" % "1.0.0",
-    "co.fs2" %% "fs2-io" % "2.2.1",
+    "co.fs2" %% "fs2-io" % "2.2.2",
   ),
 ).dependsOn(event)
 
@@ -64,11 +64,12 @@ lazy val protocol = (project in file("protocol")).settings(
   scalaVersion := "2.13.1",
   resolvers += Resolver.bintrayRepo("alexknvl", "maven"),
   libraryDependencies ++= Seq(
-    "io.circe" %% "circe-core" % "0.13.0-RC1",
-    "io.circe" %% "circe-generic" % "0.13.0-RC1",
+    "io.circe" %% "circe-core" % "0.13.0",
+    "io.circe" %% "circe-generic" % "0.13.0",
     "org.scodec" %% "scodec-stream" % "2.0.0",
     "com.chuusai" %% "shapeless" % "2.3.3",
-    "eu.timepit" %% "singleton-ops" % "0.4.1",
+    "eu.timepit" %% "singleton-ops" % "0.4.3",
+    "com.alexknvl" %% "polymorphic" % "0.5.0",
   ),
 ).dependsOn(event, nbt)
 
@@ -78,9 +79,9 @@ lazy val bungee = (project in file("bungee")).settings(
   version := "0.1.0",
   scalaVersion := "2.13.1",
   libraryDependencies ++= Seq(
-    "io.circe" %% "circe-core" % "0.13.0-RC1",
-    "co.fs2" %% "fs2-io" % "2.2.1",
-    "com.alexknvl" %% "polymorphic" % "0.5.0",
+    "io.circe" %% "circe-core" % "0.13.0",
+    "co.fs2" %% "fs2-io" % "2.2.2",
   ),
   addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full),
+  mainClass in assembly := Some("tf.bug.cubicmetre.bungee.Main"),
 ).dependsOn(protocol)
